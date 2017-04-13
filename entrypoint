@@ -1,7 +1,8 @@
 #!/bin/bash -e
+
 # Add logstash as command if needed
 if [ "${1:0:1}" = '-' ]; then
-  set -- logstash -f ${LOGSTASH_CONF_DIR} "$@"
+  set -- logstash "$@"
 fi
 
 # Replace all set environment variables from in the current shell session.
@@ -19,16 +20,17 @@ function substenv {
 }
 
 # Map user to current UID/GID
-function map_uid() {
-  export USER_ID="$(id -u)"
-  export GROUP_ID="$(id -g)"
-  substenv ${HOME}/passwd.in /tmp/passwd
-  export NSS_WRAPPER_PASSWD=/tmp/passwd
-  export NSS_WRAPPER_GROUP=/etc/group
-  export LD_PRELOAD=/usr/lib64/libnss_wrapper.so
-}
+export USER_ID="$(id -u)"
+export GROUP_ID="$(id -g)"
+substenv ${HOME}/passwd.in /tmp/passwd
+export NSS_WRAPPER_PASSWD=/tmp/passwd
+export NSS_WRAPPER_GROUP=/etc/group
+export LD_PRELOAD=/usr/lib64/libnss_wrapper.so
 
-map_uid
+# execute all init scripts
+for f in ${LS_INIT_DIR}/* ; do
+  [[ -x ${f} ]] && ${f}
+done
 
 # As argument is not related to elasticsearch,
 # then assume that user wants to run his own process,
