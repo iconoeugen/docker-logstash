@@ -11,7 +11,7 @@ fi
 function substenv {
   local in_file="$1"
   local out_file="$2"
-  local temp_file=$(mktemp -t substenv.XXXX)
+  local temp_file="$(mktemp -t substenv.XXXX)"
   cat "${in_file}" > ${temp_file}
   compgen -v | while read var ; do
     sed -i "s/\${$var}/$(echo ${!var} | sed -e 's/\\/\\\\/g' -e 's/\//\\\//g' -e 's/&/\\\&/g')/g" "${temp_file}"
@@ -29,7 +29,10 @@ export LD_PRELOAD=/usr/lib64/libnss_wrapper.so
 
 # execute all init scripts
 for f in ${LS_INIT_DIR}/* ; do
-  [[ -x ${f} ]] && ${f}
+  log_info "Initialize environment from $f"
+  set -o allexport
+  source "${f}"
+  set +o allexport
 done
 
 # As argument is not related to elasticsearch,
