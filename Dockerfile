@@ -12,7 +12,9 @@ ENV USER=logstash \
 
 ENV LS_SETTINGS_DIR=/etc/logstash \
     LS_INIT_DIR=/etc/logstash/init.d \
-    LS_CONF_DIR=/etc/logstash/conf.d
+    LS_CONF_DIR=/etc/logstash/conf.d \
+    LS_DATA_DIR=/var/lib/logstash \
+    LS_LOGS_DIR=/var/log/logstash    
 
 COPY logstash.repo /etc/yum.repos.d/logstash.repo
 ENV LS_VERSION 1:5.3.0-1
@@ -22,7 +24,7 @@ RUN yum -y install logstash-${LS_VERSION}.noarch && \
 COPY passwd.in ${HOME}/
 COPY entrypoint /
 
-RUN for path in /var/lib/logstash /var/log/logstash ${HOME} ${LS_SETTINGS_DIR} ${LS_CONF_DIR} ${LS_INIT_DIR}; do \
+RUN for path in ${HOME} ${LS_SETTINGS_DIR} ${LS_CONF_DIR} ${LS_INIT_DIR} ${LS_DATA_DIR} ${LS_LOGS_DIR}; do \
       mkdir -p "$path" && chmod -R ug+rwX "$path" && chown -R $USER:root "$path"; \
     done
 USER 1000

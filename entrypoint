@@ -28,8 +28,7 @@ export NSS_WRAPPER_GROUP=/etc/group
 export LD_PRELOAD=/usr/lib64/libnss_wrapper.so
 
 # execute all init scripts
-files=$(shopt -s nullglob dotglob; echo "${INIT_DIR}"/*)
-for f in ${files} ; do
+for f in $(shopt -s nullglob dotglob; echo "${LS_INIT_DIR}"/*) ; do
   echo "Initialize environment from $f"
   set -o allexport
   source "${f}"
