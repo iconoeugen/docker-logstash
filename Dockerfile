@@ -14,12 +14,13 @@ ENV LS_SETTINGS_DIR=/etc/logstash \
     LS_INIT_DIR=/etc/logstash/init.d \
     LS_CONF_DIR=/etc/logstash/conf.d \
     LS_DATA_DIR=/var/lib/logstash \
-    LS_LOGS_DIR=/var/log/logstash    
+    LS_LOGS_DIR=/var/log/logstash
 
 COPY logstash.repo /etc/yum.repos.d/logstash.repo
 ENV LS_VERSION 1:5.3.0-1
 RUN yum -y install logstash-${LS_VERSION}.noarch && \
-    yum clean all
+    yum clean all && \
+    logstash-plugin install x-pack
 
 COPY passwd.in ${HOME}/
 COPY entrypoint /
