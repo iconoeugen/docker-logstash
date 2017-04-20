@@ -35,6 +35,8 @@ for f in $(shopt -s nullglob dotglob; echo "${LS_INIT_DIR}"/*) ; do
   set +o allexport
 done
 
+substenv ${LS_SETTINGS_DIR}/logstash.yml.in ${LS_SETTINGS_DIR}/logstash.yml
+
 # As argument is not related to elasticsearch,
 # then assume that user wants to run his own process,
 # for example a `bash` shell to explore this image
