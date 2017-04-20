@@ -19,13 +19,10 @@ ENV LS_SETTINGS_DIR=/etc/logstash \
 COPY logstash.repo /etc/yum.repos.d/logstash.repo
 ENV LS_VERSION 1:5.3.0-1
 RUN yum -y install logstash-${LS_VERSION}.noarch && \
-    yum clean all && \
-    logstash-plugin install x-pack
+    yum clean all
 
 COPY passwd.in ${HOME}/
 COPY entrypoint /
-COPY logstash.yml.in ${LS_SETTINGS_DIR}/logstash.yml.in
-COPY init.d ${LS_INIT_DIR}/
 
 RUN for path in ${HOME} ${LS_SETTINGS_DIR} ${LS_CONF_DIR} ${LS_INIT_DIR} ${LS_DATA_DIR} ${LS_LOGS_DIR}; do \
       mkdir -p "$path" && chmod -R ug+rwX "$path" && chown -R $USER:root "$path"; \
